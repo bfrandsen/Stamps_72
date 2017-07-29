@@ -106,12 +106,17 @@ Ext.define('Stamps.view.StampController', {
     tb.query('#defaultvalue')[0].setValue(record.get('katalogvalue'));
   },
   onCellkeydown: function (me, td, ci, rec, tr, ri, e) {
-    var ptb = this.getView().down('pagingtoolbar');
     if (ri === 25 && e.keyCode === 40) {
-      ptb.moveNext();
+      this.getView().down('pagingtoolbar').moveNext();
+      return;
     }
-    if (ri === 0 && e.keyCode === 38)
-      ptb.movePrevious();
+    if (ri === 0 && e.keyCode === 38) {
+      this.getView().down('pagingtoolbar').movePrevious();
+      return;
+    }
+    /*if (e.keyCode === 107 && me.up('grid').findPlugin('cellediting').editing && e.position.column.text === 'Imagenavn') {
+      console.log(me.up('grid').findPlugin('cellediting'));
+    }*/
   },
   onPageChange: function (me, data) {
     if (data.total !== 0) {
