@@ -1,0 +1,1 @@
+INSERT INTO `skanpct` (SELECT nw.`Land`,nw.`Katalog`,(nw.`sum`-(SELECT ol.`sum` from `skanold` ol WHERE nw.`Land`=ol.`Land`))/(SELECT ol.`sum` from `skanold` ol WHERE nw.`Land`=ol.`Land`) as `Changed%`,nw.`sum`-(SELECT ol.`sum` from `skanold` ol WHERE nw.`Land`=ol.`Land`) as `Changed` FROM `skannew` nw)
