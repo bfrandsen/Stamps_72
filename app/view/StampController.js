@@ -47,9 +47,15 @@ Ext.define('Stamps.view.StampController', {
       if (chars[i] === 'Z') {
         chars[i] = 'A';
         if (i === 0)
-          chars.splice(0, 0, 'A');
+          chars.splice(i, 0, 'A');
       } else if (chars[i] === '9') {
         chars[i] = '0';
+        if (i > 0) {
+          if (chars[i - 1].match(/[A-Z]/i)) {
+            chars.splice(i, 0, '1');
+            break;
+          }
+        }
       } else {
         chars[i] = String.fromCharCode(chars[i].charCodeAt() + 1);
         break;
