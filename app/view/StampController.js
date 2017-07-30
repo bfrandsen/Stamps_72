@@ -21,7 +21,7 @@ Ext.define('Stamps.view.StampController', {
       }
     },
     'viewstamp': {
-      cellkeydown: 'onCellkeydown',
+      beforecellkeydown: 'onBeforeCellkeydown',
       beforeedit: 'onBeforeEdit'
     },
     'viewstamp > pagingtoolbar': {
@@ -46,6 +46,8 @@ Ext.define('Stamps.view.StampController', {
     for (var i = chars.length - 1; i >= 0; i--) {
       if (chars[i] === 'Z') {
         chars[i] = 'A';
+        if (i === 0)
+          chars.splice(0, 0, 'A');
       } else if (chars[i] === '9') {
         chars[i] = '0';
       } else {
@@ -105,18 +107,21 @@ Ext.define('Stamps.view.StampController', {
     tb.query('#defaultquality')[0].setValue(record.get('Kvalitet'));
     tb.query('#defaultvalue')[0].setValue(record.get('katalogvalue'));
   },
-  onCellkeydown: function (me, td, ci, rec, tr, ri, e) {
+  onBeforeCellkeydown: function (me, td, ci, rec, tr, ri, e) {
     if (ri === 25 && e.keyCode === 40) {
       this.getView().down('pagingtoolbar').moveNext();
-      return;
+      return false;
     }
     if (ri === 0 && e.keyCode === 38) {
       this.getView().down('pagingtoolbar').movePrevious();
-      return;
+      return false;
     }
-    /*if (e.keyCode === 107 && me.up('grid').findPlugin('cellediting').editing && e.position.column.text === 'Imagenavn') {
-      console.log(me.up('grid').findPlugin('cellediting'));
-    }*/
+    var plugin = me.up('grid').findPlugin('cellediting');
+    if (e.keyCode === 188 && plugin.editing && e.position.column.text === 'Imagenavn') {
+      var editor = plugin.getActiveEditor(), value = editor.getValue(), comma = value.lastIndexOf(',');
+      editor.setValue(editor.getValue() + ',' + this.stepImagename(comma >= 0 ? value.substr(comma + 1) : value));
+      return false;
+    }
   },
   onPageChange: function (me, data) {
     if (data.total !== 0) {
