@@ -31,12 +31,15 @@ Ext.define('Stamps.view.StampController', {
   onBeforeEdit: function (editor, context) {
     if (context.field === 'Imagename')
       if (context.value === '') {
-        var preRecord = context.grid.getStore().getByInternalId(context.record.internalId - 1);
+        var store = context.grid.getStore();
+        var preRecord = store.getByInternalId(context.record.internalId - 1), record = store.getByInternalId(context.record.internalId);
         if (preRecord !== null) {
           var value = preRecord.get('Imagename'), comma = value.lastIndexOf(',');
           if (comma >= 0)
             value = value.substr(comma + 1);
-          context.grid.getStore().data.items[context.rowIdx].set('Imagename', this.stepImagename(value));
+          for (var i=0;i<record.get('sortorder')-preRecord.get('sortorder');i++)
+            value=this.stepImagename(value);          
+          store.data.items[context.rowIdx].set('Imagename', value);
 
         }
       }

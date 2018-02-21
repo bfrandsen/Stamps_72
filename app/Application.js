@@ -8,8 +8,7 @@
 Ext.define('Stamps.Application', {
   extend: 'Ext.app.Application',
 
-  name: 'Stamps',
-  glyphFontFamily: 'font-awesome',
+  name: 'Stamps',  
 
   stores: ['Tree', 'Stamp', 'Quality'],
 

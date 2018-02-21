@@ -37,6 +37,10 @@ Ext.define('Stamps.model.Stamp', {
   {
     name: 'Imagename',     
     type: 'string'
+  },
+  {
+    name: 'sortorder',     
+    type: 'int'
   }
   ]
 });

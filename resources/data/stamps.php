@@ -55,7 +55,7 @@ if ($Nr > 0) {
   $exch = $Stamps->query($query_valuta)->fetch_assoc();
   $query_path = sprintf("SELECT `stampworldpath` FROM landtype WHERE `Nr`=%s",$Nr);
   $path = $Stamps->query($query_path)->fetch_object();
-  $query = sprintf("SELECT SQL_CALC_FOUND_ROWS s.`id`, s.`Nr`, s.`Katalognummer` as katalognummer, s.`Kvalitet`, s.`Katalogvalue` as katalogvalue, s.`Katalogvalue`*%s as value, s.`Imagename` FROM stamps s WHERE" . $where . " ORDER BY" . $qsrt, $exch['Kurs'], $Nr);
+  $query = sprintf("SELECT SQL_CALC_FOUND_ROWS s.`id`, s.`Nr`, s.`Katalognummer` as katalognummer, s.`Kvalitet`, s.`Katalogvalue` as katalogvalue, s.`Katalogvalue`*%s as value, s.`Imagename`, s.`sortorder` FROM stamps s WHERE" . $where . " ORDER BY" . $qsrt, $exch['Kurs'], $Nr);
   $query .= " LIMIT " . $start . "," . $limit;
   //echo $query;
   $rs = $Stamps->query($query);
