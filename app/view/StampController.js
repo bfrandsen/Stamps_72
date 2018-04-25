@@ -34,9 +34,9 @@ Ext.define('Stamps.view.StampController', {
         var store = context.grid.getStore();
         var preRecord = store.getByInternalId(context.record.internalId - 1), record = store.getByInternalId(context.record.internalId);
         if (preRecord !== null) {
-          var value = preRecord.get('Imagename'), comma = value.lastIndexOf(',');
+          var value = preRecord.get('Imagename'), comma = value.indexOf(',');
           if (comma >= 0)
-            value = value.substr(comma + 1);
+            value = value.substring(0,comma);
           for (var i=0;i<record.get('sortorder')-preRecord.get('sortorder');i++)
             value=this.stepImagename(value);          
           store.data.items[context.rowIdx].set('Imagename', value);
@@ -93,7 +93,7 @@ Ext.define('Stamps.view.StampController', {
           this.mon(this.getEl(), 'load', function (e) {
             var parentwindow = me.up('toast');
             if (parentwindow.getWidth() - this.getWidth() < 0)
-              parentwindow.setWidth(22 + this.getWidth());
+              parentwindow.setWidth(22 + this.getWidth()+1);
             else
               parentwindow.setWidth(parentwindow.getWidth() + this.getWidth());
             if (parentwindow.getHeight() - 62 < this.getHeight())
