@@ -25,7 +25,7 @@ Ext.define('Stamps.view.Tree', {
       }]
   },
   columns: [{xtype: 'actioncolumn',
-      width: 41,
+      width: 44,
       getTypeFromRecord: function (rec) {
         var prefix = rec.get('id').substring(0, 3);
         return prefix === 'cat' ? 'katalog' : (prefix === 'cou' ? 'land' : 'kategori');
