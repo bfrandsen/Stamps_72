@@ -26,6 +26,18 @@ Ext.define('Stamps.view.StampController', {
     },
     'viewstamp > pagingtoolbar': {
       change: 'onPageChange'
+    },
+    '#defaultnumber': {
+      keyup: 'onKeyUp'
+    }
+  },
+  onKeyUp: function (field, event, opt) {
+    var n = Number(field.value);
+    if (n) {
+      var key = event.keyCode;
+      if (key === 38 || key === 40)
+        field.setValue(n + 39 - key);
+      return false;
     }
   },
   onBeforeEdit: function (editor, context) {

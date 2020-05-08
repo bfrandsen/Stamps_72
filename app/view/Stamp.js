@@ -120,6 +120,7 @@ Ext.define('Stamps.view.Stamp', {
       items: [{
           xtype: 'textfield',
           id: 'defaultnumber',
+          enableKeyEvents: true,
           fieldLabel: 'Katalognummer:',
           value: 'Change',
           labelWidth: 100,
