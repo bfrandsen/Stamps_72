@@ -31,7 +31,7 @@ Ext.define('Stamps.view.Tree', {
         return prefix === 'cat' ? 'katalog' : (prefix === 'cou' ? 'land' : 'kategori');
       },
       items: [{getClass: function (v, meta, rec) {
-            return this.getTypeFromRecord(rec) === 'katalog' ? 'x-fa fa-plus-square-o' : '';
+            return this.getTypeFromRecord(rec) === 'katalog' ? 'x-far fa-plus-square' : '';
           },
           getTip: function (v, meta, rec) {
             var typ = this.getTypeFromRecord(rec);
@@ -41,7 +41,7 @@ Ext.define('Stamps.view.Tree', {
             return this.getTypeFromRecord(rec) !== 'katalog';
           }
         }, {getClass: function (v, meta, rec) {
-            return this.getTypeFromRecord(rec) === 'katalog' ? 'x-fa fa-minus-square-o' : '';
+            return this.getTypeFromRecord(rec) === 'katalog' ? 'x-far fa-minus-square' : '';
           },
           getTip: function (v, meta, rec) {
             return 'Slet ' + this.getTypeFromRecord(rec);

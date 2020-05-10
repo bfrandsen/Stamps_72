@@ -11,11 +11,11 @@ Ext.define('Stamps.view.StampController', {
     },
     'actioncolumn': {
       click: function (view, cell, row, col, event, rec) {
-        var pre = "[class$='x-fa fa-";
-        if (event.getTarget(pre + "arrow-up'")) {
+        var pre = "[class$='x-fa";
+        if (event.getTarget(pre + "s fa-arrow-up'")) {
           this.onCopyRowClick(rec);
         }
-        if (event.getTarget(pre + "photo'")) {
+        if (event.getTarget(pre + "r fa-image'")) {
           this.onLoadPicButtonClick(rec, event);
         }
       }

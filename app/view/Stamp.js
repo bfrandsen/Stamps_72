@@ -13,7 +13,7 @@ Ext.define('Stamps.view.Stamp', {
   multiColumnSort: true,
   columns: [{xtype: 'actioncolumn',
       width: 30,
-      items: [{iconCls: 'x-fa fa-arrow-up',
+      items: [{iconCls: 'x-fas fa-arrow-up',
           tooltip: 'Copy to form'
         }]},
     {xtype: 'actioncolumn',
@@ -21,7 +21,7 @@ Ext.define('Stamps.view.Stamp', {
       items: [{getClass: function (v, meta, rec) {
             if (rec.get('Imagename'))
             {
-              return 'x-fa fa-photo';
+              return 'x-far fa-image';
             }
           },getTip: function (v, meta, rec) {
             if (rec.get('Imagename'))

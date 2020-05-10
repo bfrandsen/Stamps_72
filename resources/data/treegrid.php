@@ -54,7 +54,7 @@ class type {
   public $amount;
   public $records;
   public $leaf = true;
-  public $iconCls = "x-fa fa-stack-exchange";
+  public $iconCls = "x-fas fa-mail-bulk";
 
   function __construct($id, $title, $amount, $records) {
     $this->id = $id;

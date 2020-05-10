@@ -12,11 +12,11 @@ Ext.define('Stamps.view.TreeController', {
     },
     'viewtree actioncolumn': {
       click: function (view, cell, row, col, event, rec) {
-        var pre = "[class$='x-fa fa-";
-        if (event.getTarget(pre + "plus-square-o'")) {
+        var pre = "[class$='x-far fa-";
+        if (event.getTarget(pre + "plus-square'")) {
           this.onCreate(rec);
         }
-        if (event.getTarget(pre + "minus-square-o'")) {
+        if (event.getTarget(pre + "minus-square'")) {
           this.onDelete(rec);
         }
       }

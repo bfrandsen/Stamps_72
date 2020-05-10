@@ -67,6 +67,12 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
         },
         _tags = (Ext.platformTags = {}),
 
+        // All calls to _debug are commented out to speed up old browsers a bit;
+        // yes that makes a difference because the cost of concatenating strings
+        // and passing them into _debug() adds up pretty quickly.
+        _debug = function (message) {
+            //console.log(message);
+        },
         _apply = function (object, config, defaults) {
             if (defaults) {
                 _apply(object, defaults);
@@ -167,6 +173,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             /*
              * simple helper method for debugging
              */
+            debug: _debug,
 
             /**
              * enables / disables loading scripts via script / link elements rather
@@ -544,8 +551,14 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                 Boot.isIE9 = Boot.hasReadyState && !Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
                 Boot.isIE10p = Boot.hasReadyState && Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
 
-                Boot.isIE10 = (new Function('/*@cc_on return @_jscript_version @*/')()) === 10;
-                Boot.isIE10m = Boot.isIE10 || Boot.isIE9 || Boot.isIE8;
+                if (Boot.isIE8) {
+                    Boot.isIE10 = false;
+                    Boot.isIE10m = true;
+                }
+                else {
+                    Boot.isIE10 = navigator.appVersion.indexOf('MSIE 10') !== -1;
+                    Boot.isIE10m = Boot.isIE10 || Boot.isIE9 || Boot.isIE8;
+                }
                 
                 // IE11 does not support conditional compilation so we detect it by exclusion
                 Boot.isIE11 = Boot.isIE10p && !Boot.isIE10;
@@ -566,6 +579,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                     }
 
                     if (!Boot.scripts[key = Boot.canonicalUrl(src)]) {
+//                         _debug("creating entry " + key + " in Boot.init");
                         entry = new Entry({
                             key: key,
                             url: src,
@@ -711,6 +725,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             },
 
             load: function (request) {
+//                 _debug("Boot.load called");
                 var request = new Request(request);
 
                 if (request.sync || Boot.syncMode) {
@@ -720,6 +735,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                 // If there is a request in progress, we must
                 // queue this new request to be fired  when the current request completes.
                 if (Boot.currentRequest) {
+//                     _debug("current active request, suspending this request");
                     // trigger assignment of entries now to ensure that overlapping
                     // entries with currently running requests will synchronize state
                     // with this pending one as they complete
@@ -733,6 +749,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             },
 
             loadSync: function (request) {
+//                 _debug("Boot.loadSync called");
                 var request = new Request(request);
 
                 Boot.syncMode++;
@@ -761,6 +778,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                     while(Boot.suspendedQueue.length > 0) {
                         next = Boot.suspendedQueue.shift();
                         if(!next.done) {
+//                             _debug("resuming suspended request");
                             Boot.load(next);
                             break;
                         }
@@ -845,6 +863,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                 }
 
                 try {
+//                     _debug("fetching " + url + " " + (async ? "async" : "sync"));
                     xhr.open('GET', url, async);
                     xhr.send(null);
                 } catch (err) {
@@ -1199,6 +1218,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             var listeners = this.listeners,
                 listener;
             if(listeners) {
+//                 _debug("firing request listeners");
                 while((listener = listeners.shift())) {
                     listener(this);
                 }
@@ -1215,6 +1235,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             return cfg;
         }
 
+//         _debug("creating entry for " + cfg.url);
 
         var charset = cfg.charset || Boot.config.charset,
             manifest = Ext.manifest,
@@ -1255,6 +1276,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
         isCrossDomain: function() {
             var me = this;
             if(me.crossDomain === undefined) {
+//                 _debug("checking " + me.getLoadUrl() + " for prefix " + Boot.origin);
                 me.crossDomain = (me.getLoadUrl().indexOf(Boot.origin) !== 0);
             }
             return me.crossDomain;
@@ -1277,6 +1299,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             var me = this,
                 el = me.el;
             if (!el) {
+//                 _debug("creating element for " + me.url);
                 if (me.isCss()) {
                     tag = tag || "link";
                     el = doc.createElement(tag);
@@ -1337,6 +1360,11 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             me.loaded = true;
             if ((exception || status === 0) && !_environment.phantom) {
                 me.error =
+                    ("Failed loading synchronously via XHR: '" + url +
+                        "'. It's likely that the file is either being loaded from a " +
+                        "different domain or from the local file system where cross " +
+                        "origin requests are not allowed for security reasons. Try " +
+                        "asynchronous loading instead.") ||
                     true;
                 me.evaluated = true;
             }
@@ -1348,6 +1376,9 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             }
             else {
                 me.error =
+                    ("Failed loading synchronously via XHR: '" + url +
+                        "'. Please verify that the file exists. XHR status code: " +
+                        status) ||
                     true;
                 me.evaluated = true;
             }
@@ -1395,6 +1426,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
         },
 
         inject: function (content, asset) {
+//             _debug("injecting content for " + this.url);
             var me = this,
                 head = Boot.getHead(),
                 url = me.url,
@@ -1641,6 +1673,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
             var listeners = this.listeners,
                 listener;
             if(listeners && listeners.length > 0) {
+//                 _debug("firing event listeners for url " + this.url);
                 while((listener = listeners.shift())) {
                     listener(this);
                 }
@@ -1776,6 +1809,9 @@ var Ext = Ext || window['Ext'] || {};
  */
 Ext.Microloader = Ext.Microloader || (function () {
     var Boot = Ext.Boot,
+        _debug = function (message) {
+            //console.log(message);
+        },
         _warn = function (message) {
             console.log("[WARN] " + message);
         },
@@ -1801,9 +1837,11 @@ Ext.Microloader = Ext.Microloader || (function () {
         // ignore
     }
 
-    var _cache = window['applicationCache'],
-        // Local Storage Controller
-        LocalStorage = {
+    // appCache
+    var _cache;
+
+    // Local Storage Controller
+    var LocalStorage = {
             clearAllPrivate: function(manifest) {
                 if(_storage) {
 
@@ -1823,6 +1861,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                     }
 
                     for(i in removeKeys) {
+                        _debug("Removing "+ removeKeys[i] + " from Local Storage");
                         _storage.removeItem(removeKeys[i]);
                     }
                 }
@@ -1850,6 +1889,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                 }
                 catch (e) {
                     if (_storage && e.code == e.QUOTA_EXCEEDED_ERR) {
+                        _warn("LocalStorage Quota exceeded, cannot store " + key + " locally");
                     }
                 }
             }
@@ -1976,7 +2016,7 @@ Ext.Microloader = Ext.Microloader || (function () {
             },
 
             useAppCache: function() {
-                return true;
+                return this.content.appCacheEnabled;
             },
 
             // Concatenate all assets for easy access
@@ -1996,9 +2036,13 @@ Ext.Microloader = Ext.Microloader || (function () {
                 if (this.shouldCache()) {
                     LocalStorage.setAsset(this.key, JSON.stringify(content || this.content));
                 }
+                else {
+                    _debug("Manifest caching is disabled.");
+                }
             },
 
             is: function(manifest) {
+                _debug("Testing Manifest: " + this.hash + " VS " +  manifest.hash);
                 return this.hash === manifest.hash;
             },
 
@@ -2050,8 +2094,12 @@ Ext.Microloader = Ext.Microloader || (function () {
 
             applyCacheBuster: function(url) {
                 var tstamp = new Date().getTime(),
-                    sep = url.indexOf('?') === -1 ? '?' : '&';
-                url = url + sep + "_dc=" + tstamp;
+                    sep = url.indexOf('?') === -1 ? '?' : '&',
+                    progressive = Ext.manifest.progressive,
+                    serviceWorker = progressive && progressive.serviceWorker;
+                if (!serviceWorker) {
+                    url = url + sep + "_dc=" + tstamp;
+                }
                 return url;
             },
 
@@ -2069,6 +2117,7 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                     // Manifest found in local storage, use this for immediate boot except in PhantomJS environments for building.
                     if (content) {
+                            _debug("Manifest file, '" + url + "', was found in Local Storage");
                         manifest = new Manifest({
                             url: url,
                             content: content,
@@ -2082,6 +2131,7 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                     // Manifest is not in local storage. Fetch it from the server
                     } else {
+                        _debug("Manifest file was not found in Local Storage, loading: " + url);
 
                         if (location.href.indexOf('file:/') === 0) {
                             Manifest.url = Microloader.applyCacheBuster(url + 'p');
@@ -2097,6 +2147,7 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                 // Embedded Manifest into JS file
                 } else {
+                        _debug("Manifest was embedded into application javascript file");
                     manifest = new Manifest({
                         content: manifest
                     });
@@ -2127,6 +2178,13 @@ Ext.Microloader = Ext.Microloader || (function () {
                 Microloader.urls = [];
                 Microloader.manifest = manifest;
                 Ext.manifest = Microloader.manifest.exportContent();
+                var progressive = Ext.manifest.progressive;
+                if (progressive && progressive.serviceWorker) {
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.register('./' + progressive.serviceWorker);
+                        Ext.Boot.config.disableCaching = false;
+                    }
+                }
 
                 var assets = manifest.getAssets(),
                     cachedAssets = [],
@@ -2140,12 +2198,14 @@ Ext.Microloader = Ext.Microloader || (function () {
                         if (manifest.shouldCache() && asset.shouldCache()) {
                             // Asset already has content from localStorage, instantly seed that into boot
                             if (asset.content) {
+                                    _debug("Asset: " + asset.assetConfig.path + " was found in local storage. No remote load for this file");
                                 entry = Boot.registerContent(asset.assetConfig.path, asset.type, asset.content);
                                 if (entry.evaluated) {
                                     _warn("Asset: " + asset.assetConfig.path + " was evaluated prior to local storage being consulted.");
                                 }
                             //load via AJAX and seed content into Boot
                             } else {
+                                    _debug("Asset: " + asset.assetConfig.path + " was NOT found in local storage. Adding to load queue");
                                 cachedAssets.push(asset);
                             }
                         }
@@ -2159,6 +2219,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                     Microloader.remainingCachedAssets = cachedAssets.length;
                     while (cachedAssets.length > 0) {
                         asset = cachedAssets.pop();
+                            _debug("Preloading/Fetching Cached Assets from: " + asset.assetConfig.path);
                         Boot.fetch(asset.assetConfig.path, (function(asset) {
                             return function(result) {
                                 Microloader.onCachedAssetLoaded(asset, result);
@@ -2184,7 +2245,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                         // Un cache this asset so it is loaded next time
                         asset.uncache();
                     }
-
+                        _debug("Checksum for Cached Asset: " + asset.assetConfig.path + " is " + checksum);
                     Boot.registerContent(asset.assetConfig.path, asset.type, result.content);
                     asset.updateContent(result.content);
                     asset.cache();
@@ -2214,11 +2275,12 @@ Ext.Microloader = Ext.Microloader || (function () {
             onAllAssetsReady: function() {
                 _loaded = true;
                 Microloader.notify();
-
                 if (navigator.onLine !== false) {
+                        _debug("Application is online, checking for updates");
                     Microloader.checkAllUpdates();
                 }
                 else {
+                        _debug("Application is offline, adding online listener to check for updates");
                     if(window['addEventListener']) {
                         window.addEventListener('online', Microloader.checkAllUpdates, false);
                     }
@@ -2237,6 +2299,7 @@ Ext.Microloader = Ext.Microloader || (function () {
              * @private
              */
             notify: function () {
+                    _debug("notifying microloader ready listeners.");
                 var listener;
                 while((listener = _listeners.shift())) {
                     listener();
@@ -2267,11 +2330,12 @@ Ext.Microloader = Ext.Microloader || (function () {
             },
 
             checkAllUpdates: function() {
+                    _debug("Checking for All Updates");
                 if(window['removeEventListener']) {
                     window.removeEventListener('online', Microloader.checkAllUpdates, false);
                 }
 
-                if(_cache) {
+                if (Microloader.manifest.useAppCache()) {
                     Microloader.checkForAppCacheUpdate();
                 }
 
@@ -2282,9 +2346,22 @@ Ext.Microloader = Ext.Microloader || (function () {
             },
 
             checkForAppCacheUpdate: function() {
+                _debug("Checking App Cache status");
+
+                if (!_cache) {
+                    try {
+                        _cache = !!window.applicationCache && window.applicationCache
+                    } catch (e) {
+                          _debug("Application has enabled AppCache but it is not supported by this browser");
+                        return;
+                    }
+                }
+
                 if (_cache.status === _cache.UPDATEREADY || _cache.status === _cache.OBSOLETE) {
+                        _debug("App Cache is already in an updated");
                     Microloader.appCacheState = 'updated';
                 } else if (_cache.status !== _cache.IDLE && _cache.status !== _cache.UNCACHED) {
+                        _debug("App Cache is checking or downloading updates, adding listeners");
                     Microloader.appCacheState = 'checking';
                     _cache.addEventListener('error', Microloader.onAppCacheError);
                     _cache.addEventListener('noupdate', Microloader.onAppCacheNotUpdated);
@@ -2292,12 +2369,14 @@ Ext.Microloader = Ext.Microloader || (function () {
                     _cache.addEventListener('updateready', Microloader.onAppCacheReady);
                     _cache.addEventListener('obsolete', Microloader.onAppCacheObsolete);
                 } else {
+                        _debug("App Cache is current or uncached");
                     Microloader.appCacheState = 'current';
                 }
             },
 
             checkForUpdates: function() {
                 // Fetch the Latest Manifest from the server
+                    _debug("Checking for updates at: " + Microloader.manifest.url);
                 Boot.fetch(Microloader.applyCacheBuster(Microloader.manifest.url), Microloader.onUpdatedManifestLoaded);
             },
 
@@ -2318,11 +2397,13 @@ Ext.Microloader = Ext.Microloader || (function () {
             },
 
             appCacheUpdated: function() {
+                    _debug("App Cache Updated");
                 Microloader.appCacheState = 'updated';
                 Microloader.notifyUpdateReady();
             },
 
             onAppCacheNotUpdated: function() {
+                    _debug("App Cache Not Updated Callback");
                 Microloader.appCacheState = 'current';
                 Microloader.notifyUpdateReady();
             },
@@ -2358,7 +2439,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                     // If the updated manifest has turned off caching we need to clear out all local storage
                     // and trigger a appupdate as all content is now uncached
                     if (!manifest.shouldCache()) {
-
+                        _debug("New Manifest has caching disabled, clearing out any private storage");
                         Microloader.updatedManifest = manifest;
                         LocalStorage.clearAllPrivate(manifest);
                         Microloader.onAllUpdatedAssetsReady();
@@ -2379,6 +2460,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                             include = Microloader.filterAsset(newAsset);
 
                             if (include && (!currentAsset || (newAsset.shouldCache() && (!currentAsset.is(newAsset))))) {
+                                    _debug("New/Updated Version of Asset: " + newAsset.assetConfig.path + " was found in new manifest");
                                 updatingAssets.push({_new: newAsset, _current: currentAsset});
                             }
                         }
@@ -2392,6 +2474,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                             include = !Microloader.filterAsset(newAsset);
 
                             if (!include || !newAsset || (currentAsset.shouldCache() && !newAsset.shouldCache())) {
+                                    _debug("Asset: " + currentAsset.assetConfig.path + " was not found in new manifest, has been filtered out or has been switched to not cache. Marked for removal");
                                 Microloader.removedAssets.push(currentAsset);
                             }
                         }
@@ -2407,6 +2490,11 @@ Ext.Microloader = Ext.Microloader || (function () {
                                 // Full Updates will simply download the file and replace its current content
                                 if (newAsset.assetConfig.update === "full" || !currentAsset) {
 
+                                    if (newAsset.assetConfig.update === "delta") {
+                                        _debug("Delta updated asset found without current asset available: " + newAsset.assetConfig.path + " fetching full file");
+                                    } else {
+                                        _debug("Full update found for: " + newAsset.assetConfig.path + " fetching");
+                                    }
 
                                     // Load the asset and cache its  its content into Boot to be evaluated in sequence
                                     Boot.fetch(newAsset.assetConfig.path, (function (asset) {
@@ -2421,6 +2509,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                                     deltas = manifest.deltas;
                                     deltaPath = deltas + "/" + newAsset.assetConfig.path + "/" + currentAsset.assetConfig.hash + ".json";
                                     // Fetch the Delta Patch and update the contents of the asset
+                                        _debug("Delta update found for: " + newAsset.assetConfig.path + " fetching");
                                     Boot.fetch(deltaPath,
                                         (function (asset, oldAsset) {
                                             return function (result) {
@@ -2431,9 +2520,11 @@ Ext.Microloader = Ext.Microloader || (function () {
                                 }
                             }
                         } else {
+                                _debug("No Assets needed updating");
                             Microloader.onAllUpdatedAssetsReady();
                         }
                     } else {
+                            _debug("Manifest files have matching hash's");
                         Microloader.onAllUpdatedAssetsReady();
                     }
                 } else {
@@ -2449,8 +2540,9 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                 if (!result.error) {
                     checksum = Microloader.checksum(result.content, asset.assetConfig.hash);
+                        _debug("Checksum for Full asset: " + asset.assetConfig.path + " is " + checksum);
                     if (!checksum) {
-
+                            _debug("Full Update Asset: " + asset.assetConfig.path + " has failed checksum. This asset will be uncached for future loading");
                         // uncache this asset as there is a new version somewhere that has not been loaded.
                         asset.uncache();
                     } else {
@@ -2458,7 +2550,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                         Microloader.updatedAssets.push(asset);
                     }
                 } else {
-
+                        _debug("Error loading file at" + asset.assetConfig.path + ". This asset will be uncached for future loading");
                     // uncache this asset as there is a new version somewhere that has not been loaded.
                     asset.uncache();
                 }
@@ -2474,12 +2566,14 @@ Ext.Microloader = Ext.Microloader || (function () {
                 Microloader.remainingUpdatingAssets--;
 
                 if (!result.error) {
+                        _debug("Delta patch loaded successfully, patching content");
                     try {
                         json = JSON.parse(result.content);
                         content = Microloader.patch(oldAsset.content, json);
                         checksum = Microloader.checksum(content, asset.assetConfig.hash);
+                            _debug("Checksum for Delta Patched asset: " + asset.assetConfig.path + " is " + checksum);
                         if (!checksum) {
-
+                                _debug("Delta Update Asset: " + asset.assetConfig.path + " has failed checksum. This asset will be uncached for future loading");
                             // uncache this asset as there is a new version somewhere that has not been loaded.
                             asset.uncache();
                         } else {
@@ -2510,15 +2604,18 @@ Ext.Microloader = Ext.Microloader || (function () {
                 if (Microloader.updatedManifest) {
                     while (Microloader.removedAssets.length > 0) {
                         asset = Microloader.removedAssets.pop();
+                            _debug("Asset: " + asset.assetConfig.path + " was removed, un-caching");
                         asset.uncache();
                     }
 
                     if (Microloader.updatedManifest) {
+                        _debug("Manifest was updated, re-caching");
                         Microloader.updatedManifest.cache();
                     }
 
                     while (Microloader.updatedAssets.length > 0) {
                         asset = Microloader.updatedAssets.pop();
+                            _debug("Asset: " + asset.assetConfig.path + " was updated, re-caching");
                         asset.cache();
                     }
 
@@ -2530,6 +2627,7 @@ Ext.Microloader = Ext.Microloader || (function () {
             notifyUpdateReady: function () {
                 if (Microloader.appCacheState !== 'checking' && Microloader.updatedAssetsReady) {
                     if (Microloader.appCacheState === 'updated' || Microloader.updatedManifest) {
+                            _debug("There was an update here you will want to reload the app, trigger an event");
                         Microloader.appUpdate = {
                             updated: true,
                             app: Microloader.appCacheState === 'updated',
@@ -2537,6 +2635,10 @@ Ext.Microloader = Ext.Microloader || (function () {
                         };
 
                         Microloader.fireAppUpdate();
+                    }
+                    else {
+                        _debug("AppCache and LocalStorage Cache are current, no updating needed");
+                        Microloader.appUpdate = {};
                     }
                 }
             },
