@@ -12,7 +12,6 @@ Ext.define('Stamps.view.Tree', {
   useArrows: true,
   autoLoad: true,
   rootVisible: false,
-  multiSelect: false,
   singleExpand: true,
   plugins: {ptype: 'cellediting',
     clicksToEdit: 2,
@@ -54,7 +53,6 @@ Ext.define('Stamps.view.Tree', {
       text: 'Titel',
       width: 280,
       dataIndex: 'title',
-      align: 'start',
       editor: {
         allowBlank: false
       }

@@ -66,8 +66,7 @@ Ext.define('Stamps.view.Stamp', {
         typeAhead: true,
         queryMode: 'local',
         store: {type: 'quality'},
-        valueField: 'id',
-        displayField: 'text'
+        valueField: 'id'
       },
       filter: {type: 'list', store: {type: 'quality'}},
       renderer: function (value) {
@@ -133,7 +132,6 @@ Ext.define('Stamps.view.Stamp', {
           queryMode: 'local',
           store: {type: 'quality'},
           valueField: 'id',
-          displayField: 'text',
           value: 6
         }, {
           xtype: 'numberfield',
