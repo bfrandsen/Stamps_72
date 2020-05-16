@@ -14,7 +14,7 @@ Ext.define('Stamps.view.Stamp', {
   columns: [{xtype: 'actioncolumn',
       width: 30,
       items: [{iconCls: 'x-fas fa-arrow-up',
-          tooltip: 'Copy to form'
+          tooltip: 'Overfør til input felter'
         }]},
     {xtype: 'actioncolumn',
       width: 30,
@@ -29,7 +29,7 @@ Ext.define('Stamps.view.Stamp', {
               return 'Vis billede';
             }
           },
-          isDisabled: function (v, row, col, item, rec) {
+          isActionDisabled: function (v, row, col, item, rec) {
             return !rec.get('Imagename');
           }
         }]},
@@ -58,6 +58,18 @@ Ext.define('Stamps.view.Stamp', {
       },
       filter: 'string'
     }, {
+      dataIndex: 'katalogvalue',
+      text: 'Katalogværdi',
+      width: 150,
+      align: 'right',
+      editor: {
+        allowBlank: false
+      },
+      filter: 'number',
+      renderer: function (value, meta, record) {
+        return Ext.util.Format.currency(value, record.get('valuta'), 2, true, ' ');
+      }
+    }, {
       dataIndex: 'Kvalitet',
       text: 'Kvalitet (Type)',
       width: 200,
@@ -72,18 +84,6 @@ Ext.define('Stamps.view.Stamp', {
       renderer: function (value) {
         var types = Ext.getStore('Quality');
         return types.getAt(types.findExact('id', value)).get('text');
-      }
-    }, {
-      dataIndex: 'katalogvalue',
-      text: 'Katalogværdi',
-      width: 150,
-      align: 'right',
-      editor: {
-        allowBlank: false
-      },
-      filter: 'number',
-      renderer: function (value, meta, record) {
-        return Ext.util.Format.currency(value, record.get('valuta'), 2, true, ' ');
       }
     }, {
       dataIndex: 'value',

@@ -66,7 +66,7 @@ Ext.define('Stamps.view.TreeController', {
     });
   },
   onCreate: function (rec) {
-    var type = ' katalog';
+    var type = 'katalog';
     /*if (Ext.String.startsWith(rec.get('id'), 'cat'))
      type = 'nyt katalog';
      else if (Ext.String.startsWith(rec.get('id'), 'cou'))
@@ -80,7 +80,7 @@ Ext.define('Stamps.view.TreeController', {
       modal: true,
       title: 'Adder ' + type,
       items: {xtype: 'form',
-        items: [{xtype: 'textfield', reference: 'title', fieldLabel: Ext.String.capitalize(type), value: rec.get('title'), allowBlank: false, name: 'title'}],
+        items: [{xtype: 'textfield', width: 480, reference: 'title', fieldLabel: Ext.String.capitalize(type), value: rec.get('title'), allowBlank: false, name: 'title'}],
         buttons: [{text: 'OK', formBind: true, scope: rec,
             handler: function (btn) {
               var form = btn.up('form'), val = form.down('textfield').getValue();

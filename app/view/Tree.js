@@ -36,7 +36,7 @@ Ext.define('Stamps.view.Tree', {
             var typ = this.getTypeFromRecord(rec);
             return 'Adder ' + this.getTypeFromRecord(rec);
           },
-          isDisabled: function (v, row, col, item, rec) {
+          isActionDisabled: function (v, row, col, item, rec) {
             return this.getTypeFromRecord(rec) !== 'katalog';
           }
         }, {getClass: function (v, meta, rec) {
@@ -45,7 +45,7 @@ Ext.define('Stamps.view.Tree', {
           getTip: function (v, meta, rec) {
             return 'Slet ' + this.getTypeFromRecord(rec);
           },
-          isDisabled: function (v, row, col, item, rec) {
+          isActionDisabled: function (v, row, col, item, rec) {
             return this.getTypeFromRecord(rec) !== 'katalog';
           }
         }]}, {
