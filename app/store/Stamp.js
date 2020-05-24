@@ -3,7 +3,7 @@
 Ext.define('Stamps.store.Stamp', {
   extend: 'Ext.data.Store',
   alias: 'store.stamp',
-  //storeId : 'store-stamp',
+  storeId : 'store-stamp',
   model: 'Stamps.model.Stamp',
   autoLoad: true,
   autoSync: true,

@@ -3,6 +3,13 @@
 Ext.define('Stamps.view.TreeController', {
   extend: 'Ext.app.ViewController',
   alias: 'controller.viewtree',
+  listen: {
+    store: {
+      '#currency': {
+        load: 'onCurrencyLoad'
+      }
+    }
+  },
   control: {
     'viewtree': {
       select: 'onTreeSelect'
@@ -109,5 +116,29 @@ Ext.define('Stamps.view.TreeController', {
       }
     }
     ).show();
+  },
+  onCurrencyLoad: function () {
+    var rec = Ext.getStore('currency').getAt(0), dkk = rec.get('DKK');
+    this.valutaAjax('NOK',dkk / rec.get('NOK'),false);
+    this.valutaAjax('SEK',dkk / rec.get('SEK'),false);
+    this.valutaAjax('EUR',dkk / rec.get('EUR'),true);
+  },
+  valutaAjax: function (land, kurs, final) {
+    Ext.Ajax.request({
+      url: 'resources/data/updatevaluta.php',
+      method: 'POST',
+      params: {
+        Land: land,
+        Kurs: kurs
+      },
+      success: function (response, opts) {
+        var obj = Ext.decode(response.responseText);
+        if (obj.success && final) {
+          var tree = Ext.ComponentQuery.query('viewtree')[0];
+          tree.expandNode(tree.getRootNode());
+          tree.collapseNode(tree.getRootNode());
+        }
+      }
+    });
   }
 });

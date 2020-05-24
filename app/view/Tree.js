@@ -10,7 +10,7 @@ Ext.define('Stamps.view.Tree', {
   width: 600,
   collapsible: false,
   useArrows: true,
-  autoLoad: true,
+  autoLoad: false,
   rootVisible: false,
   singleExpand: true,
   plugins: {ptype: 'cellediting',

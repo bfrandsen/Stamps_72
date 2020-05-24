@@ -10,7 +10,7 @@ Ext.define('Stamps.Application', {
 
   name: 'Stamps',  
 
-  stores: ['Tree', 'Stamp', 'Quality'],
+  stores: ['Currency', 'Tree', 'Stamp', 'Quality'],
 
   launch: function () {
     // TODO - Launch the application
