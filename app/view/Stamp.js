@@ -58,18 +58,6 @@ Ext.define('Stamps.view.Stamp', {
       },
       filter: 'string'
     }, {
-      dataIndex: 'katalogvalue',
-      text: 'Katalogværdi',
-      width: 150,
-      align: 'right',
-      editor: {
-        allowBlank: false
-      },
-      filter: 'number',
-      renderer: function (value, meta, record) {
-        return Ext.util.Format.currency(value, record.get('valuta'), 2, true, ' ');
-      }
-    }, {
       dataIndex: 'Kvalitet',
       text: 'Kvalitet (Type)',
       width: 200,
@@ -84,6 +72,18 @@ Ext.define('Stamps.view.Stamp', {
       renderer: function (value) {
         var types = Ext.getStore('Quality');
         return types.getAt(types.findExact('id', value)).get('text');
+      }
+    }, {
+      dataIndex: 'katalogvalue',
+      text: 'Katalogværdi',
+      width: 150,
+      align: 'right',
+      editor: {
+        allowBlank: false
+      },
+      filter: 'number',
+      renderer: function (value, meta, record) {
+        return Ext.util.Format.currency(value, record.get('valuta'), 2, true, ' ');
       }
     }, {
       dataIndex: 'value',

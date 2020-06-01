@@ -129,7 +129,7 @@ Ext.define('Stamps.view.StampController', {
     tb.query('#defaultvalue')[0].setValue(record.get('katalogvalue'));
   },
   onBeforeCellkeydown: function (me, td, ci, rec, tr, ri, e) {
-    if (ri === 25 && e.keyCode === 40) {
+    if (ri === me.getStore().pageSize-1 && e.keyCode === 40) {
       this.getView().down('pagingtoolbar').moveNext();
       return false;
     }
@@ -156,7 +156,7 @@ Ext.define('Stamps.view.StampController', {
     if (data.total !== 0) {
       var row = data.currentPage >= this.getPage() ? 0 : data.toRecord - data.fromRecord;
       this.setPage(data.currentPage);
-      this.getView().getSelectionModel().select({row: row, column: 3});
+      this.getView().getSelectionModel().select({row: row, column: 4});
       this.getView().getView().focusRow(row);
     }
   }

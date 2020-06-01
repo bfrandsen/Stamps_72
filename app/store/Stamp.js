@@ -9,7 +9,7 @@ Ext.define('Stamps.store.Stamp', {
   autoSync: true,
   remoteFilter: true,
   remoteSort: true,
-  pageSize: 26,
+  pageSize: 31,
   proxy: {
     type: 'ajax',
     api: {
