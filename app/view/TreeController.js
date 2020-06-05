@@ -34,7 +34,9 @@ Ext.define('Stamps.view.TreeController', {
       var type = rec.get('id').slice(4),
               grid = Ext.ComponentQuery.query('viewstamp')[0],
               store = grid.getStore(),
-              view = grid.getView();
+              view = grid.getView(),
+              bc = Ext.ComponentQuery.query('breadcrumb')[0];
+      bc.setSelection(rec);
       view.deselect(view.getSelectedNodes());
       store.getProxy().setExtraParam('Nr', type);
       store.sorters.clear();
@@ -119,9 +121,9 @@ Ext.define('Stamps.view.TreeController', {
   },
   onCurrencyLoad: function () {
     var rec = Ext.getStore('currency').getAt(0), dkk = rec.get('DKK');
-    this.valutaAjax('NOK',dkk / rec.get('NOK'),false);
-    this.valutaAjax('SEK',dkk / rec.get('SEK'),false);
-    this.valutaAjax('EUR',dkk / rec.get('EUR'),true);
+    this.valutaAjax('NOK', dkk / rec.get('NOK'), false);
+    this.valutaAjax('SEK', dkk / rec.get('SEK'), false);
+    this.valutaAjax('EUR', dkk / rec.get('EUR'), true);
   },
   valutaAjax: function (land, kurs, final) {
     Ext.Ajax.request({

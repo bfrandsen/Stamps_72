@@ -23,7 +23,7 @@ Ext.define('Stamps.view.Stamp', {
             {
               return 'x-far fa-image';
             }
-          },getTip: function (v, meta, rec) {
+          }, getTip: function (v, meta, rec) {
             if (rec.get('Imagename'))
             {
               return 'Vis billede';
@@ -112,7 +112,8 @@ Ext.define('Stamps.view.Stamp', {
       xtype: 'pagingtoolbar',
       dock: 'bottom',
       displayInfo: true
-    }, {
+    },
+    {
       xtype: 'toolbar',
       store: {type: 'stamp'},
       dock: 'top',
