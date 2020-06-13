@@ -13,9 +13,10 @@ Ext.define('Stamps.view.Viewport', {
       region: 'center',
       xtype: 'viewstamp',
       id: 'centerpanel',
-      title: {xtype: 'breadcrumb',
+      title: {
+        xtype: 'breadcrumb',
         store: 'store-tree',
-        useSplitButtons: false,
+        useSplitButtons: true,
         focusableContainer: false,
         rootVisible: false,
         displayField: 'title',
