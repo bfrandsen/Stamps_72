@@ -114,13 +114,15 @@ Ext.define('Stamps.view.StampController', {
         }}});
   },
   onInsertButtonClick: function (me) {
-    var tb = me.up('toolbar'), store = this.getView().getStore();
+    var tb = me.up('toolbar'), store = this.getView().getStore(), task = new Ext.util.DelayedTask(function () {
+      this.getView().down('pagingtoolbar').doRefresh();
+    }, this);
     store.add({
       katalognummer: tb.query('#defaultnumber')[0].getValue(),
       Kvalitet: tb.query('#defaultquality')[0].getValue(),
       katalogvalue: tb.query('#defaultvalue')[0].getValue()
     });
-    store.reload();
+    task.delay(250);
   },
   onCopyRowClick: function (/*view, rowIndex, colIndex, item, e, */record) {
     var tb = this.getView().down('toolbar');
@@ -129,7 +131,7 @@ Ext.define('Stamps.view.StampController', {
     tb.query('#defaultvalue')[0].setValue(record.get('katalogvalue'));
   },
   onBeforeCellkeydown: function (me, td, ci, rec, tr, ri, e) {
-    if (ri === me.getStore().pageSize-1 && e.keyCode === 40) {
+    if (ri === me.getStore().pageSize - 1 && e.keyCode === 40) {
       this.getView().down('pagingtoolbar').moveNext();
       return false;
     }
