@@ -2,7 +2,7 @@
 
 Ext.define ('Stamps.store.Quality', {
   extend: 'Ext.data.Store',
-  alias : 'store.quality',
+  storeId: 'Quality',
   model: 'Stamps.model.Dropdown',
   autoLoad:true,
   proxy: {
